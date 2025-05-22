@@ -51,6 +51,8 @@ export class Visual implements IVisual {
     private currentOptions: VisualUpdateOptions | null = null;
     private selectedCategory: string | null = null;
 
+    private legendMarginLeft:number = 150;
+
     constructor(options: VisualConstructorOptions) {
         this.formattingSettingsService = new FormattingSettingsService();
         this.target = options.element;
@@ -274,14 +276,20 @@ export class Visual implements IVisual {
     }
 
     private createLineChart(categorical: DataViewCategorical) {
-        const width = this.chartContainer.clientWidth;
-        const height = this.chartContainer.clientHeight;
-        const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+        const containerWidth = this.chartContainer.clientWidth;
+        const containerHeight = this.chartContainer.clientHeight;
+        const margin = { top: 40, right: 40, bottom: 80, left: 60 };
+
+        // Calculate actual chart dimensions
+        const width = containerWidth - margin.left - margin.right - this.legendMarginLeft;
+        const height = containerHeight - margin.top - margin.bottom;
 
         const svg = d3.select(this.chartContainer)
             .append("svg")
-            .attr("width", width)
-            .attr("height", height);
+            .attr("width", containerWidth)
+            .attr("height", containerHeight)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
 
         // Get X and Y axis data
         const xAxisData = categorical.categories.find(cat => cat.source.roles.xAxis);
@@ -295,41 +303,40 @@ export class Visual implements IVisual {
 
         const x = d3.scaleBand()
             .domain(xAxisData.values.map(d => d.toString()).sort((a, b) => a.localeCompare(b)))
-            .range([margin.left, width - margin.right - 60])
+            .range([0, width])
             .padding(0.1);
 
         const y = d3.scaleLinear()
             .domain([0, d3.max(yAxisData.values as number[]) as number])
-            .range([height - margin.bottom, margin.top]);
+            .range([height, 0]);
 
         // Add X axis
-        svg.append("g")
-            .attr("transform", `translate(0,${height - margin.bottom})`)
+        const xAxis = svg.append("g")
+            .attr("transform", `translate(0,${height})`)
             .call(d3.axisBottom(x));
+
+        // 移除X轴标签的旋转
+        xAxis.selectAll("text")
+            .style("text-anchor", "middle")
+            .attr("dy", ".71em");
 
         // Add Y axis
         svg.append("g")
-            .attr("transform", `translate(${margin.left},0)`)
             .call(d3.axisLeft(y));
 
-        // Add X axis with grid lines
-        const xAxis = svg.append("g")
-            .attr("transform", `translate(0,${height - margin.bottom})`)
-            .call(d3.axisBottom(x));
+        // Add X axis grid lines
         xAxis.selectAll(".tick line")
             .clone()
-            .attr("y2", -(height - margin.top - margin.bottom))
+            .attr("y2", -height)
             .attr("stroke", "#c8c6c4")
             .attr("stroke-opacity", 0.5);
-        xAxis.select(".domain").remove();
 
-        // Add Y axis with grid lines
+        // Add Y axis grid lines
         const yAxis = svg.append("g")
-            .attr("transform", `translate(${margin.left},0)`)
             .call(d3.axisLeft(y));
         yAxis.selectAll(".tick line")
             .clone()
-            .attr("x2", width - margin.left - margin.right - 60)
+            .attr("x2", width)
             .attr("stroke", "#c8c6c4")
             .attr("stroke-opacity", 0.5);
         yAxis.select(".domain").remove();
@@ -349,6 +356,7 @@ export class Visual implements IVisual {
             if (!this.selectedValue) return true;
             return group.legend === this.selectedValue;
         });
+
         // Create lines
         filteredData.forEach((group, index) => {
             const line = d3.line<{x: any, y: number, index: number}>()
@@ -525,7 +533,7 @@ export class Visual implements IVisual {
         // 图标
         const legend = svg.append("g")
             .attr("class", "legend")
-            .attr("transform", `translate(${width - margin.right - 50}, ${margin.top})`);
+            .attr("transform", `translate(${width + 50}, 0)`);
 
         filteredData.forEach((group, index) => {
             const data = group.values as {x: any, y: number, index: number}[];
@@ -550,13 +558,12 @@ export class Visual implements IVisual {
                 .style("fill", "#666");
         });
 
-
         // 添加阈值点图例
         if (thresholdData) {
             const thresholdValue = categorical.values.find(col => "Threshold Mark" == col.source.displayName)?.values;
             const thresholdLegend = svg.append("g")
                 .attr("class", "threshold-legend")
-                .attr("transform", `translate(${width - margin.right - 50}, ${margin.top + filteredData.length * 25 + 50})`);
+                .attr("transform", `translate(${width + 50}, ${filteredData.length * 25 + 50})`);
 
             thresholdLegend.append("text")
                 .text("Threshold Mark");

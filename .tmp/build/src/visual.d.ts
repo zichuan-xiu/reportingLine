@@ -12,6 +12,7 @@ export declare class Visual implements IVisual {
     private selectedValue;
     private currentOptions;
     private selectedCategory;
+    private legendMarginLeft;
     constructor(options: VisualConstructorOptions);
     update(options: VisualUpdateOptions): void;
     private createTable;
