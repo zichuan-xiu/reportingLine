@@ -1,0 +1,17 @@
+{
+		"version": "1.0.0.0",
+		"author": {"name":"Zichuan Xiu","email":"zichuanxiu2023@gmail.com"},
+		"resources": [
+			{
+				"resourceId": "rId0",
+				"sourceType": 5,
+				"file": "resources/reportingLineFE7A9FF0BB834627AE4A13BE3FE59462.pbiviz.json"
+			}
+		],
+		"visual": {"name":"reportingLine","displayName":"reportingLine","guid":"reportingLineFE7A9FF0BB834627AE4A13BE3FE59462","visualClassName":"Visual","version":"1.0.0.0","description":"visual for innocare","supportUrl":"http://localhost:8080","gitHubUrl":""},
+		"metadata": {
+			"pbivizjson": {
+				"resourceId": "rId0"
+			}
+		}
+	}

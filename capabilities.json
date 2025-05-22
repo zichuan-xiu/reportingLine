@@ -1,0 +1,105 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Table Filter",
+            "name": "tableFilter",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Table Field",
+            "name": "tableField",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "X Axis",
+            "name": "xAxis",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Y Axis",
+            "name": "yAxis",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "Threshold",
+            "name": "threshold",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Line Legend",
+            "name": "lineLegend",
+            "kind": "Grouping"
+        }
+    ],
+    "objects": {
+        "tableSettings": {
+            "displayName": "Table Settings",
+            "properties": {
+                "fontSize": {
+                    "displayName": "Font Size",
+                    "type": { "numeric": true }
+                }
+            }
+        },
+        "chartSettings": {
+            "displayName": "Chart Settings",
+            "properties": {
+                "showPoints": {
+                    "displayName": "Show Points",
+                    "type": { "bool": true }
+                },
+                "lineWidth": {
+                    "displayName": "Line Width",
+                    "type": { "numeric": true }
+                },
+                "pointSize": {
+                    "displayName": "Point Size",
+                    "type": { "numeric": true }
+                }
+            }
+        }
+    },
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "tableFilter": {
+                        "max": 10
+                    },
+                    "tableField": {
+                        "max": 10
+                    },
+                    "xAxis": {
+                        "max": 1
+                    },
+                    "yAxis": {
+                        "max": 1
+                    },
+                    "threshold": {
+                        "max": 1
+                    },
+                    "lineLegend": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "categories": {
+                    "select": [
+                        { "bind": { "to": "tableFilter" } },
+                        { "bind": { "to": "xAxis" } },
+                        { "bind": { "to": "threshold" } },
+                        { "bind": { "to": "lineLegend" } }
+                    ]
+                },
+                "values": {
+                    "select": [
+                        { "bind": { "to": "tableField" } },
+                        { "bind": { "to": "yAxis" } }
+                    ]
+                }
+            }
+        }
+    ],
+    "privileges": []
+}

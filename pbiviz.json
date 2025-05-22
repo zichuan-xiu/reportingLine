@@ -1,0 +1,12 @@
+{"visual":
+  {"name":"reportingLine",
+    "displayName":"reportingLine",
+    "guid":"reportingLineFE7A9FF0BB834627AE4A13BE3FE59462",
+    "visualClassName":"Visual",
+    "version":"1.0.0.0",
+    "description":"visual for innocare",
+    "supportUrl":"http://localhost:8080",
+    "gitHubUrl":""
+  },
+  "apiVersion":"5.3.0",
+  "author":{"name":"Zichuan Xiu","email":"zichuanxiu2023@gmail.com"},"assets":{"icon":"assets/icon.png"},"externalJS":null,"style":"style/visual.less","capabilities":"capabilities.json","dependencies":null,"stringResources":[],"version":"1.0.0.0"}
