@@ -3080,7 +3080,7 @@ class Visual {
             .range([0, width])
             .padding(0.1);
         const y = d3__WEBPACK_IMPORTED_MODULE_1__/* .scaleLinear */ .m4Y()
-            .domain([0, d3__WEBPACK_IMPORTED_MODULE_1__/* .max */ .T9B(yAxisData.values)])
+            .domain([0, Math.ceil(d3__WEBPACK_IMPORTED_MODULE_1__/* .max */ .T9B(yAxisData.values))])
             .range([height, 0]);
         // Add X axis
         const xAxis = svg.append("g")
@@ -3228,15 +3228,17 @@ class Visual {
                     .style("cursor", "pointer")
                     .on("mouseover", (event, d) => {
                     const pointData = d;
-                    const xAxisName = xAxisData.source.displayName;
+                    const legendData = lineLegendData.values;
+                    // const xAxisName = xAxisData.source.displayName;
                     const yAxisName = yAxisData.source.displayName;
+                    const legendName = lineLegendData.source.displayName;
                     // Calculate point position
                     const pointX = x(pointData.x.toString()) + x.bandwidth() / 2;
                     const pointY = y(pointData.y);
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", .9);
-                    tooltip.html(`${xAxisName}: ${pointData.x}<br/>${yAxisName}: ${pointData.y}`)
+                    tooltip.html(`${legendName}: ${legendData[pointData.index]}<br/>${yAxisName}: ${pointData.y}`)
                         .style("left", (pointX + 10) + "px")
                         .style("top", (pointY - 10) + "px");
                 })

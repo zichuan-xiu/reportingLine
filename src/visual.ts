@@ -312,7 +312,7 @@ export class Visual implements IVisual {
             .padding(0.1);
 
         const y = d3.scaleLinear()
-            .domain([0, d3.max(yAxisData.values as number[]) as number])
+            .domain([0, Math.ceil(d3.max(yAxisData.values as number[]) as number)])
             .range([height, 0]);
 
         // Add X axis
@@ -466,8 +466,10 @@ export class Visual implements IVisual {
                     .style("cursor", "pointer")
                     .on("mouseover", (event, d) => {
                         const pointData = d as {x: any, y: number, index: number};
-                        const xAxisName = xAxisData.source.displayName;
+                        const legendData = lineLegendData.values;
+                        // const xAxisName = xAxisData.source.displayName;
                         const yAxisName = yAxisData.source.displayName;
+                        const legendName = lineLegendData.source.displayName
                         
                         // Calculate point position
                         const pointX = x(pointData.x.toString())! + x.bandwidth() / 2;
@@ -477,7 +479,7 @@ export class Visual implements IVisual {
                             .duration(200)
                             .style("opacity", .9);
                         
-                        tooltip.html(`${xAxisName}: ${pointData.x}<br/>${yAxisName}: ${pointData.y}`)
+                        tooltip.html(`${legendName}: ${legendData[pointData.index]}<br/>${yAxisName}: ${pointData.y}`)
                             .style("left", (pointX + 10) + "px")
                             .style("top", (pointY - 10) + "px");
                     })
