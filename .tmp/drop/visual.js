@@ -3057,6 +3057,10 @@ class Visual {
         // Calculate actual chart dimensions
         const width = containerWidth - margin.left - margin.right - this.legendMarginLeft;
         const height = containerHeight - margin.top - margin.bottom;
+        // Create tooltip div
+        const tooltip = d3__WEBPACK_IMPORTED_MODULE_1__/* .select */ .Ltv(this.chartContainer)
+            .append("div")
+            .attr("class", "tooltip");
         const svg = d3__WEBPACK_IMPORTED_MODULE_1__/* .select */ .Ltv(this.chartContainer)
             .append("svg")
             .attr("width", containerWidth)
@@ -3222,6 +3226,25 @@ class Visual {
                     .attr("r", this.formattingSettings.chartSettings.pointSize.value)
                     .attr("fill", d => this.getPointColor(d, thresholdData))
                     .style("cursor", "pointer")
+                    .on("mouseover", (event, d) => {
+                    const pointData = d;
+                    const xAxisName = xAxisData.source.displayName;
+                    const yAxisName = yAxisData.source.displayName;
+                    // Calculate point position
+                    const pointX = x(pointData.x.toString()) + x.bandwidth() / 2;
+                    const pointY = y(pointData.y);
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                    tooltip.html(`${xAxisName}: ${pointData.x}<br/>${yAxisName}: ${pointData.y}`)
+                        .style("left", (pointX + 10) + "px")
+                        .style("top", (pointY - 10) + "px");
+                })
+                    .on("mouseout", () => {
+                    tooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                })
                     .on("click", (event, d) => {
                     // Find the corresponding line and trigger its click event
                     const pointData = d;

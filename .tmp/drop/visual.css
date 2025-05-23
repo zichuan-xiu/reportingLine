@@ -83,6 +83,18 @@ p em {
   display: flex;
   flex-direction: column;
 }
+.chart-container .tooltip {
+  opacity: 0;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  pointer-events: none;
+  font-size: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.2s ease;
+}
 .chart-container svg {
   width: 100%;
   height: 100%;
