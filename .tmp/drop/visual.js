@@ -2859,7 +2859,7 @@ class Visual {
     selectedValue = null;
     currentOptions = null;
     selectedCategory = null;
-    legendMarginLeft = 150;
+    legendMarginLeft = 175;
     constructor(options) {
         this.formattingSettingsService = new powerbi_visuals_utils_formattingmodel__WEBPACK_IMPORTED_MODULE_0__/* .FormattingSettingsService */ .O();
         this.target = options.element;
@@ -2989,8 +2989,8 @@ class Visual {
                     case "Red":
                         circle.style.backgroundColor = "#e75a48";
                         break;
-                    default:
-                        circle.style.backgroundColor = "#1f77b4";
+                    // default:
+                    //     circle.style.backgroundColor = "#1f77b4";
                 }
             }
             statusTd.appendChild(circle);
@@ -3080,7 +3080,7 @@ class Visual {
             .range([0, width])
             .padding(0.1);
         const y = d3__WEBPACK_IMPORTED_MODULE_1__/* .scaleLinear */ .m4Y()
-            .domain([0, Math.ceil(d3__WEBPACK_IMPORTED_MODULE_1__/* .max */ .T9B(yAxisData.values))])
+            .domain([0, Math.ceil(d3__WEBPACK_IMPORTED_MODULE_1__/* .max */ .T9B(yAxisData.values)) * 10 / 10])
             .range([height, 0]);
         // Add X axis
         const xAxis = svg.append("g")
@@ -3341,7 +3341,7 @@ class Visual {
                 .attr("y1", 0)
                 .attr("x2", 20)
                 .attr("y2", 0)
-                .attr("stroke", this.getLineColor(index, data))
+                .attr("stroke", this.getLineColor(index, data, lineLegendData))
                 .attr("stroke-width", 2);
             // 文本
             legendItem.append("text")
@@ -3384,19 +3384,19 @@ class Visual {
                 }
             });
             // 默认点图例
-            const defaultLegend = thresholdLegend.append("g")
-                .attr("transform", `translate(0, ${legendIndex * 25 + 25})`);
-            defaultLegend.append("circle")
-                .attr("cx", 10)
-                .attr("cy", 0)
-                .attr("r", this.formattingSettings.chartSettings.pointSize.value)
-                .attr("fill", "#1f77b4");
-            defaultLegend.append("text")
-                .attr("x", 25)
-                .attr("y", 4)
-                .text("Others")
-                .style("font-size", "12px")
-                .style("fill", "#666");
+            // const defaultLegend = thresholdLegend.append("g")
+            //   .attr("transform", `translate(0, ${legendIndex * 25 + 25})`);
+            // defaultLegend.append("circle")
+            //   .attr("cx", 10)
+            //   .attr("cy", 0)
+            //   .attr("r", this.formattingSettings.chartSettings.pointSize.value)
+            //   .attr("fill", "#1f77b4");
+            // defaultLegend.append("text")
+            //   .attr("x", 25)
+            //   .attr("y", 4)
+            //   .text("Others")
+            //   .style("font-size", "12px")
+            //   .style("fill", "#666");
         }
     }
     groupDataByLegend(xAxisData, yAxisData, lineLegendData) {
@@ -3418,6 +3418,19 @@ class Visual {
         }));
     }
     getLineColor(index, data, lineLegendData) {
+        if (lineLegendData) {
+            const legendValue = lineLegendData.values[data[0]?.index];
+            switch (legendValue?.toString()) {
+                case "01":
+                    return '#3e5266';
+                case "02":
+                    return '#ffc660';
+                case "03":
+                    return '#d2e2aa';
+                default:
+                    return '#3599b8';
+            }
+        }
         const colors = ['#3e5266', '#ffc660', '#d2e2aa', '#3599b8', '#9467bd'];
         return colors[index % colors.length];
     }

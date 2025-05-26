@@ -12,7 +12,7 @@ p em {
   align-items: stretch;
   padding: 20px;
   gap: 20px;
-  min-height: 600px;
+  min-height: 400px;
   height: 100%;
 }
 .target:after {
@@ -22,7 +22,7 @@ p em {
 }
 .table-container {
   width: 35%;
-  height: 600px;
+  height: 400px;
   margin-top: 0;
   overflow-x: auto;
   background: white;
@@ -72,7 +72,7 @@ p em {
 }
 .chart-container {
   width: 60%;
-  height: 600px;
+  height: 400px;
   position: relative;
   background: white;
   border: 1px solid #e0e0e0;

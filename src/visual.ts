@@ -51,7 +51,7 @@ export class Visual implements IVisual {
     private currentOptions: VisualUpdateOptions | null = null;
     private selectedCategory: string | null = null;
 
-    private legendMarginLeft:number = 150;
+    private legendMarginLeft:number = 175;
 
     constructor(options: VisualConstructorOptions) {
         this.formattingSettingsService = new FormattingSettingsService();
@@ -209,8 +209,8 @@ export class Visual implements IVisual {
                     case "Red":
                         circle.style.backgroundColor = "#e75a48";
                         break;
-                    default:
-                        circle.style.backgroundColor = "#1f77b4";
+                    // default:
+                    //     circle.style.backgroundColor = "#1f77b4";
                 }
             }
             
@@ -312,7 +312,7 @@ export class Visual implements IVisual {
             .padding(0.1);
 
         const y = d3.scaleLinear()
-            .domain([0, Math.ceil(d3.max(yAxisData.values as number[]) as number)])
+            .domain([0, Math.ceil(d3.max(yAxisData.values as number[]) as number) * 10 / 10])
             .range([height, 0]);
 
         // Add X axis
@@ -576,7 +576,7 @@ export class Visual implements IVisual {
                 .attr("y1", 0)
                 .attr("x2", 20)
                 .attr("y2", 0)
-                .attr("stroke", this.getLineColor(index,data))
+                .attr("stroke", this.getLineColor(index,data,lineLegendData))
                 .attr("stroke-width", 2);
             // 文本
             legendItem.append("text")
@@ -623,19 +623,19 @@ export class Visual implements IVisual {
             });
 
             // 默认点图例
-            const defaultLegend = thresholdLegend.append("g")
-              .attr("transform", `translate(0, ${legendIndex * 25 + 25})`);
-            defaultLegend.append("circle")
-              .attr("cx", 10)
-              .attr("cy", 0)
-              .attr("r", this.formattingSettings.chartSettings.pointSize.value)
-              .attr("fill", "#1f77b4");
-            defaultLegend.append("text")
-              .attr("x", 25)
-              .attr("y", 4)
-              .text("Others")
-              .style("font-size", "12px")
-              .style("fill", "#666");
+            // const defaultLegend = thresholdLegend.append("g")
+            //   .attr("transform", `translate(0, ${legendIndex * 25 + 25})`);
+            // defaultLegend.append("circle")
+            //   .attr("cx", 10)
+            //   .attr("cy", 0)
+            //   .attr("r", this.formattingSettings.chartSettings.pointSize.value)
+            //   .attr("fill", "#1f77b4");
+            // defaultLegend.append("text")
+            //   .attr("x", 25)
+            //   .attr("y", 4)
+            //   .text("Others")
+            //   .style("font-size", "12px")
+            //   .style("fill", "#666");
         }
     }
 
@@ -660,7 +660,21 @@ export class Visual implements IVisual {
         }));
     }
 
-    private getLineColor(index: number, data: {x: any, y: number}[], lineLegendData?: DataViewCategoryColumn): string {
+    private getLineColor(index: number, data: {x: any, y: number, index: number}[], lineLegendData?: DataViewCategoryColumn): string {
+        if (lineLegendData) {
+            const legendValue = lineLegendData.values[data[0]?.index];
+            switch(legendValue?.toString()) {
+                case "01":
+                    return '#3e5266';
+                case "02":
+                    return '#ffc660';
+                case "03":
+                    return '#d2e2aa';
+                default:
+                    return '#3599b8';
+            }
+        }
+        
         const colors = ['#3e5266', '#ffc660', '#d2e2aa', '#3599b8', '#9467bd'];
         return colors[index % colors.length];
     }
