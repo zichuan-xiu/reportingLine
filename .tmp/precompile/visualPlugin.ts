@@ -5,8 +5,8 @@ import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualC
 import DialogConstructorOptions = powerbiVisualsApi.extensibility.visual.DialogConstructorOptions;
 var powerbiKey: any = "powerbi";
 var powerbi: any = window[powerbiKey];
-var reportingLineFE7A9FF0BB834627AE4A13BE3FE59462_DEBUG: IVisualPlugin = {
-    name: 'reportingLineFE7A9FF0BB834627AE4A13BE3FE59462_DEBUG',
+var reportingLineFE7A9FF0BB834627AE4A13BE3FE59462: IVisualPlugin = {
+    name: 'reportingLineFE7A9FF0BB834627AE4A13BE3FE59462',
     displayName: 'reportingLine',
     class: 'Visual',
     apiVersion: '5.3.0',
@@ -27,6 +27,6 @@ var reportingLineFE7A9FF0BB834627AE4A13BE3FE59462_DEBUG: IVisualPlugin = {
 if (typeof powerbi !== "undefined") {
     powerbi.visuals = powerbi.visuals || {};
     powerbi.visuals.plugins = powerbi.visuals.plugins || {};
-    powerbi.visuals.plugins["reportingLineFE7A9FF0BB834627AE4A13BE3FE59462_DEBUG"] = reportingLineFE7A9FF0BB834627AE4A13BE3FE59462_DEBUG;
+    powerbi.visuals.plugins["reportingLineFE7A9FF0BB834627AE4A13BE3FE59462"] = reportingLineFE7A9FF0BB834627AE4A13BE3FE59462;
 }
-export default reportingLineFE7A9FF0BB834627AE4A13BE3FE59462_DEBUG;
+export default reportingLineFE7A9FF0BB834627AE4A13BE3FE59462;

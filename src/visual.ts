@@ -200,13 +200,19 @@ export class Visual implements IVisual {
             if (thresholdData) {
                 const thresholdValue = thresholdData.values[0]?.toString();
                 switch(thresholdValue) {
-                    case "Green":
-                        circle.style.backgroundColor = "#4fc14f";
-                        break;
-                    case "Yellow":
+                    // case "Green":
+                    //     circle.style.backgroundColor = "#4fc14f";
+                    //     break;
+                    case "High Yellow":
                         circle.style.backgroundColor = "#FFD700";
                         break;
-                    case "Red":
+                    case "High Red":
+                        circle.style.backgroundColor = "#e75a48";
+                        break;
+                    case "Low Yellow":
+                        circle.style.backgroundColor = "#FFD700";
+                        break;
+                    case "Low Red":
                         circle.style.backgroundColor = "#e75a48";
                         break;
                     // default:
@@ -302,6 +308,8 @@ export class Visual implements IVisual {
         const thresholdData = categorical.categories.find(cat => cat.source.roles.threshold);
         const lineLegendData = categorical.categories.find(cat => cat.source.roles.lineLegend);
 
+        console.log(xAxisData.values.length)
+
         if (!xAxisData || !yAxisData) {
             return;
         }
@@ -320,10 +328,12 @@ export class Visual implements IVisual {
             .attr("transform", `translate(0,${height})`)
             .call(d3.axisBottom(x));
 
-        // 移除X轴标签的旋转
+        // Rotate x-axis labels if there are more than 8 values
         xAxis.selectAll("text")
-            .style("text-anchor", "middle")
-            .attr("dy", ".71em");
+            .style("text-anchor", xAxisData.values.length > 8 ? "end" : "middle")
+            .attr("dx", xAxisData.values.length > 8 ? "-.8em" : "0")
+            .attr("dy", xAxisData.values.length > 8 ? ".15em" : ".71em")
+            .attr("transform", xAxisData.values.length > 8 ? "rotate(-45)" : "rotate(0)");
 
         // Add Y axis
         svg.append("g")
@@ -457,11 +467,26 @@ export class Visual implements IVisual {
                 svg.selectAll(`.point-${index}`)
                     .data(data)
                     .enter()
-                    .append("circle")
+                    .append("path")
                     .attr("class", `point-${index}`)
-                    .attr("cx", d => x((d as any).x.toString())! + x.bandwidth() / 2)
-                    .attr("cy", d => y((d as any).y))
-                    .attr("r", this.formattingSettings.chartSettings.pointSize.value)
+                    .attr("d", d => {
+                        const pointData = d as {x: any, y: number, index: number};
+                        const thresholdLabel = thresholdData?.values[pointData.index]?.toString();
+                        const pointX = x((d as any).x.toString())! + x.bandwidth() / 2;
+                        const pointY = y((d as any).y);
+                        const size = this.formattingSettings.chartSettings.pointSize.value;
+                        console.log(thresholdLabel)
+                        
+                        if (thresholdLabel === "High Red" || thresholdLabel === "High Yellow") {
+                            // Create triangle path
+                            return `M ${pointX} ${pointY - size} L ${pointX - size} ${pointY + size} L ${pointX + size} ${pointY + size} Z`;
+                        } else if (thresholdLabel === "Low Red" || thresholdLabel === "Low Yellow"){
+                            return `M ${pointX} ${pointY + size} L ${pointX - size} ${pointY - size} L ${pointX + size} ${pointY - size} Z`;
+                        } else {
+                            // Create circle path
+                            return `M ${pointX + size} ${pointY} a ${size} ${size} 0 1,0 ${-size * 2} 0 a ${size} ${size} 0 1,0 ${size * 2} 0`;
+                        }
+                    })
                     .attr("fill", d => this.getPointColor(d as {x: any, y: number, index: number}, thresholdData))
                     .style("cursor", "pointer")
                     .on("mouseover", (event, d) => {
@@ -599,19 +624,37 @@ export class Visual implements IVisual {
             let legendIndex = 0;
             const legendTypes = [
               { color: "#4fc14f", label: "Green", index: thresholdData.values.indexOf("Green") },
-              { color: "#FFD700", label: "Yellow", index: thresholdData.values.indexOf("Yellow") },
-              { color: "#e75a48", label: "Red", index: thresholdData.values.indexOf("Red") }
+              { color: "#FFD700", label: "High Yellow", index: thresholdData.values.indexOf("High Yellow") },
+              { color: "#FFD700", label: "Low Yellow", index: thresholdData.values.indexOf("Low Yellow") },
+              { color: "#e75a48", label: "High Red", index: thresholdData.values.indexOf("High Red") },
+              { color: "#e75a48", label: "Low Red", index: thresholdData.values.indexOf("Low Red") }
             ];
 
             legendTypes.forEach(type => {
               if (type.index >= 0) {
                 const legend = thresholdLegend.append("g")
                   .attr("transform", `translate(0, ${legendIndex * 25 + 25})`);
-                legend.append("circle")
-                  .attr("cx", 10)
-                  .attr("cy", 0)
-                  .attr("r", this.formattingSettings.chartSettings.pointSize.value)
-                  .attr("fill", type.color);
+                if (type.label === "High Red" || type.label === "High Yellow") {
+                    // Create triangle for Red and Yellow
+                    const size = this.formattingSettings.chartSettings.pointSize.value;
+                    legend.append("path")
+                        .attr("d", `M 10 ${-size} L ${10 - size} ${size} L ${10 + size} ${size} Z`)
+                        .attr("fill", type.color);
+                } else if (type.label === "Low Red" || type.label === "Low Yellow") {
+                    const size = this.formattingSettings.chartSettings.pointSize.value;
+                    legend.append("path")
+                        .attr("d", `M 10 ${size} L ${10 - size} ${-size} L ${10 + size} ${-size} Z`)
+                        .attr("fill", type.color);
+                } else{
+                    // Create circle for others
+                    // legend.append("circle")
+                    //     .attr("cx", 10)
+                    //     .attr("cy", 0)
+                    //     .attr("r", this.formattingSettings.chartSettings.pointSize.value)
+                    //     .attr("fill", type.color);
+                    return
+                }
+                
                 legend.append("text")
                   .attr("x", 25)
                   .attr("y", 4)
@@ -621,21 +664,6 @@ export class Visual implements IVisual {
                 legendIndex++;
               }
             });
-
-            // 默认点图例
-            // const defaultLegend = thresholdLegend.append("g")
-            //   .attr("transform", `translate(0, ${legendIndex * 25 + 25})`);
-            // defaultLegend.append("circle")
-            //   .attr("cx", 10)
-            //   .attr("cy", 0)
-            //   .attr("r", this.formattingSettings.chartSettings.pointSize.value)
-            //   .attr("fill", "#1f77b4");
-            // defaultLegend.append("text")
-            //   .attr("x", 25)
-            //   .attr("y", 4)
-            //   .text("Others")
-            //   .style("font-size", "12px")
-            //   .style("fill", "#666");
         }
     }
 
@@ -666,7 +694,11 @@ export class Visual implements IVisual {
             switch(legendValue?.toString()) {
                 case "01":
                     return '#3e5266';
+                case "0101":
+                    return '#3e5266';
                 case "02":
+                    return '#ffc660';
+                case "0102":
                     return '#ffc660';
                 case "03":
                     return '#d2e2aa';
@@ -685,10 +717,10 @@ export class Visual implements IVisual {
         }
         const thresholdLabel = thresholdData.values[point.index]?.toString();
 
-        if (thresholdLabel === "Yellow") {
+        if (thresholdLabel === "High Yellow" || thresholdLabel === "Low Yellow") {
             return '#FFD700';
         }
-        if (thresholdLabel === "Red") {
+        if (thresholdLabel === "High Red" || thresholdLabel === "Low Red") {
             return '#e75a48'
         }
         if (thresholdLabel === "Green"){
@@ -697,7 +729,7 @@ export class Visual implements IVisual {
 
 
         // Default color
-        return '#1f77b4';
+        return '#4FC14F';
     }
 
     /**
