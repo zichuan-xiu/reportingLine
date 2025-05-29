@@ -308,7 +308,6 @@ export class Visual implements IVisual {
         const thresholdData = categorical.categories.find(cat => cat.source.roles.threshold);
         const lineLegendData = categorical.categories.find(cat => cat.source.roles.lineLegend);
 
-        console.log(xAxisData.values.length)
 
         if (!xAxisData || !yAxisData) {
             return;
@@ -323,10 +322,18 @@ export class Visual implements IVisual {
             .domain([0, Math.ceil(d3.max(yAxisData.values as number[]) as number) * 10 / 10])
             .range([height, 0]);
 
+        // Calculate the number of labels to show based on width
+        const labelWidth = 30; // Approximate width needed for each label
+        const maxLabels = Math.floor(width / labelWidth);
+        const skipLabels = Math.ceil(xAxisData.values.length / maxLabels);
+
         // Add X axis
         const xAxis = svg.append("g")
             .attr("transform", `translate(0,${height})`)
-            .call(d3.axisBottom(x));
+            .call(d3.axisBottom(x).tickFormat((d, i) => {
+                // Only show labels at intervals when there are more than 8 data points
+                return xAxisData.values.length > 20 ? (i % skipLabels === 0 ? d : "") : d;
+            }));
 
         // Rotate x-axis labels if there are more than 8 values
         xAxis.selectAll("text")
