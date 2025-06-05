@@ -131,6 +131,15 @@ export class Visual implements IVisual {
             }))
         } as DataViewCategorical));
 
+        // Sort filteredCategoricals by tableFilter value in ascending order
+        filteredCategoricals.sort((a, b) => {
+            const aFilter = a.categories.find(cat => cat.source.roles.tableFilter)?.values[0]?.toString() || '';
+            const bFilter = b.categories.find(cat => cat.source.roles.tableFilter)?.values[0]?.toString() || '';
+            return aFilter.localeCompare(bFilter);
+        });
+
+        // console.log("filteredCategoricals: ", filteredCategoricals[0])
+
         const table = document.createElement("table");
         table.className = "data-table";
         table.style.fontSize = `${this.formattingSettings.tableSettings.fontSize.value}px`;
@@ -379,6 +388,14 @@ export class Visual implements IVisual {
             return group.legend === this.selectedValue;
         });
 
+        filteredData.sort((a,b)=>{
+            const aFilter = a.legend;
+            const bFilter = b.legend;
+            return aFilter.localeCompare(bFilter);
+        })
+
+        // console.log("filteredData",filteredData)
+
         // Create lines
         filteredData.forEach((group, index) => {
             const line = d3.line<{x: any, y: number, index: number}>()
@@ -482,7 +499,7 @@ export class Visual implements IVisual {
                         const pointX = x((d as any).x.toString())! + x.bandwidth() / 2;
                         const pointY = y((d as any).y);
                         const size = this.formattingSettings.chartSettings.pointSize.value;
-                        console.log(thresholdLabel)
+                        // console.log(thresholdLabel)
                         
                         if (thresholdLabel === "High Red" || thresholdLabel === "High Yellow") {
                             // Create triangle path
