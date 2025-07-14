@@ -283,6 +283,12 @@ export class Visual implements IVisual {
                 }
             });
 
+            // Set row background color based on selection
+            if (this.selectedValue && filterColumn?.values[0]?.toString() === this.selectedValue) {
+                row.style.backgroundColor = "#3599B8";
+                row.style.color = "white";
+            }
+
             tbody.appendChild(row);
         });
 
@@ -724,8 +730,10 @@ export class Visual implements IVisual {
                     return '#ffc660';
                 case "0102":
                     return '#ffc660';
-                case "03":
+                case "0103":
                     return '#d2e2aa';
+                case "0107":
+                    return '#b7e1e4';
                 default:
                     return '#3599b8';
             }

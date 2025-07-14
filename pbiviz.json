@@ -3,7 +3,7 @@
     "displayName":"reportingLine",
     "guid":"reportingLineFE7A9FF0BB834627AE4A13BE3FE59462",
     "visualClassName":"Visual",
-    "version":"1.0.0.0",
+    "version":"1.0.0.1",
     "description":"visual for innocare",
     "supportUrl":"http://localhost:8080",
     "gitHubUrl":"https://github.com/zichuan-xiu/reportingLine.git"
